@@ -18,12 +18,12 @@
 
 <script setup>
 import { useRouter } from 'vue-router'
-import { clearToken } from '../../api/client.js'
+import { clearAdminToken } from '../../api/client.js'
 
 const router = useRouter()
 
 function logout() {
-  clearToken()
+  clearAdminToken()
   router.push('/admin/login')
 }
 </script>

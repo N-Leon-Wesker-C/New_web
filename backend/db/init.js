@@ -39,17 +39,27 @@ export function initDatabase() {
     CREATE TABLE IF NOT EXISTS comments (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       article_id INTEGER NOT NULL,
+      user_id INTEGER,
       author_name TEXT NOT NULL,
       content TEXT NOT NULL,
       approved INTEGER NOT NULL DEFAULT 0,
       created_at TEXT NOT NULL DEFAULT (datetime('now')),
-      FOREIGN KEY (article_id) REFERENCES articles(id) ON DELETE CASCADE
+      FOREIGN KEY (article_id) REFERENCES articles(id) ON DELETE CASCADE,
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
     );
 
     CREATE TABLE IF NOT EXISTS admin (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       username TEXT NOT NULL UNIQUE,
       password_hash TEXT NOT NULL
+    );
+
+    CREATE TABLE IF NOT EXISTS users (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      email TEXT NOT NULL UNIQUE,
+      username TEXT NOT NULL UNIQUE,
+      password_hash TEXT NOT NULL,
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
     );
   `)
 
@@ -58,10 +68,11 @@ export function initDatabase() {
     { slug: 'career/projects', name: '项目', description: '项目经历与实践' },
     { slug: 'career/technology', name: '技术', description: '技术探索与工具' },
     { slug: 'career/investment', name: '投资', description: '投资相关思考' },
-    { slug: 'life/art', name: '艺术', description: '音乐、电影与艺术' },
-    { slug: 'life/travel', name: '旅行', description: '旅行记录' },
-    { slug: 'life/story', name: '故事', description: '生活故事' },
-    { slug: 'life/thoughts', name: '思考', description: '随笔与思考' },
+    { slug: 'blog/art', name: '艺术', description: '音乐、电影与艺术' },
+    { slug: 'blog/thoughts', name: '思考', description: '深入思考与见解' },
+    { slug: 'blog/essay', name: '随笔', description: '随笔与日常感悟' },
+    { slug: 'blog/tech', name: '技术', description: '技术相关博客' },
+    { slug: 'blog/travel', name: '旅行', description: '旅行记录与分享' },
   ]
 
   const insertCategory = db.prepare(

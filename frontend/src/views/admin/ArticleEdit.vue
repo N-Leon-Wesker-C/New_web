@@ -1,5 +1,6 @@
 <template>
   <form class="admin-form" @submit.prevent="save">
+    <p v-if="error" class="form-msg error">{{ error }}</p>
     <label>版块</label>
     <select v-model="form.categoryId" required>
       <option v-for="c in categories" :key="c.id" :value="c.id">{{ c.name }} ({{ c.slug }})</option>
@@ -12,7 +13,11 @@
     <input v-model="form.slug" placeholder="my-article-title" />
 
     <label>正文（Markdown）</label>
-    <textarea v-model="form.content" rows="16" placeholder="# 标题&#10;&#10;正文内容..."></textarea>
+    <textarea 
+      v-model="form.content" 
+      class="article-content-textarea" 
+      placeholder="# 标题&#10;&#10;正文内容..."
+    ></textarea>
 
     <label class="checkbox-label">
       <input type="checkbox" v-model="form.published" />
@@ -42,6 +47,7 @@ const categories = ref([])
 const loading = ref(false)
 const message = ref('')
 const isError = ref(false)
+const error = ref('')
 
 const form = ref({
   categoryId: null,
@@ -52,23 +58,27 @@ const form = ref({
 })
 
 onMounted(async () => {
-  categories.value = await api.getCategories()
-  if (categories.value.length) {
-    form.value.categoryId = categories.value[0].id
-  }
+  try {
+    categories.value = await api.getCategories()
+    if (categories.value.length) {
+      form.value.categoryId = categories.value[0].id
+    }
 
-  if (isEdit.value) {
-    const articles = await api.adminGetArticles()
-    const article = articles.find((a) => String(a.id) === route.params.id)
-    if (article) {
-      form.value = {
-        categoryId: article.category_id,
-        title: article.title,
-        slug: article.slug,
-        content: article.content,
-        published: !!article.published,
+    if (isEdit.value) {
+      const articles = await api.adminGetArticles()
+      const article = articles.find((a) => String(a.id) === route.params.id)
+      if (article) {
+        form.value = {
+          categoryId: article.category_id,
+          title: article.title,
+          slug: article.slug,
+          content: article.content,
+          published: !!article.published,
+        }
       }
     }
+  } catch (e) {
+    error.value = e.message || '加载失败'
   }
 })
 
@@ -92,9 +102,19 @@ async function save() {
     router.push('/admin/articles')
   } catch (e) {
     isError.value = true
-    message.value = e.message
+    message.value = e.message || '保存失败'
   } finally {
     loading.value = false
   }
 }
 </script>
+
+<style scoped>
+.article-content-textarea {
+  min-height: 400px !important;
+  resize: vertical !important;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  line-height: 1.6;
+}
+</style>

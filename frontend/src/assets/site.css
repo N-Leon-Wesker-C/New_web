@@ -551,10 +551,19 @@ footer {
   font-family: 'Cinzel', serif;
 }
 
-.markdown-body p { margin-bottom: 1em; }
+.markdown-body p { 
+  margin-bottom: 1em; 
+  color: var(--text-main);
+}
 .markdown-body a { color: var(--accent); }
 .markdown-body ul,
-.markdown-body ol { margin: 1em 0 1em 1.5em; }
+.markdown-body ol { 
+  margin: 1em 0 1em 1.5em; 
+  color: var(--text-main);
+}
+.markdown-body li {
+  color: var(--text-main);
+}
 
 .markdown-body code {
   background: rgba(0,40,80,0.5);

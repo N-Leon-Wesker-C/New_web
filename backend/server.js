@@ -6,6 +6,7 @@ import categoriesRouter from './routes/categories.js'
 import articlesRouter from './routes/articles.js'
 import commentsRouter from './routes/comments.js'
 import adminRouter from './routes/admin.js'
+import usersRouter from './routes/users.js'
 
 if (!process.env.JWT_SECRET) {
   console.error('请设置 JWT_SECRET 环境变量（见 .env.example）')
@@ -28,6 +29,7 @@ app.use('/api/categories', categoriesRouter(db))
 app.use('/api/articles', articlesRouter(db))
 app.use('/api/comments', commentsRouter(db))
 app.use('/api/admin', adminRouter(db))
+app.use('/api/users', usersRouter(db))
 
 app.use((err, req, res, next) => {
   console.error(err)

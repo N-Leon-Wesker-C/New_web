@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { getToken } from '../api/client.js'
+import { getAdminToken } from '../api/client.js'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -10,6 +10,8 @@ const router = createRouter({
   routes: [
     { path: '/', name: 'home', component: () => import('../views/Home.vue') },
     { path: '/about', name: 'about', component: () => import('../views/About.vue') },
+    { path: '/register', name: 'register', component: () => import('../views/Register.vue') },
+    { path: '/login', name: 'login', component: () => import('../views/Login.vue') },
     {
       path: '/career/:section',
       name: 'career-section',
@@ -17,10 +19,10 @@ const router = createRouter({
       props: (route) => ({ group: 'career', section: route.params.section }),
     },
     {
-      path: '/life/:section',
-      name: 'life-section',
+      path: '/blog/:section',
+      name: 'blog-section',
       component: () => import('../views/SectionList.vue'),
-      props: (route) => ({ group: 'life', section: route.params.section }),
+      props: (route) => ({ group: 'blog', section: route.params.section }),
     },
     {
       path: '/career/:section/:slug',
@@ -29,10 +31,10 @@ const router = createRouter({
       props: (route) => ({ group: 'career', section: route.params.section, slug: route.params.slug }),
     },
     {
-      path: '/life/:section/:slug',
-      name: 'life-article',
+      path: '/blog/:section/:slug',
+      name: 'blog-article',
       component: () => import('../views/ArticleDetail.vue'),
-      props: (route) => ({ group: 'life', section: route.params.section, slug: route.params.slug }),
+      props: (route) => ({ group: 'blog', section: route.params.section, slug: route.params.slug }),
     },
     { path: '/admin/login', name: 'admin-login', component: () => import('../views/admin/Login.vue') },
     {
@@ -51,7 +53,7 @@ const router = createRouter({
 })
 
 router.beforeEach((to) => {
-  if (to.meta.requiresAuth && !getToken()) {
+  if (to.meta.requiresAuth && !getAdminToken()) {
     return { name: 'admin-login', query: { redirect: to.fullPath } }
   }
 })

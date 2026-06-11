@@ -14,13 +14,16 @@
     <p style="text-align:center;margin-top:24px">
       <router-link to="/" style="color:var(--text-muted);font-size:13px">← 返回首页</router-link>
     </p>
+    <p style="text-align:center;margin-top:16px">
+      <router-link to="/login" style="color:var(--text-muted);font-size:13px">用户登录 →</router-link>
+    </p>
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { api, setToken } from '../../api/client.js'
+import { api, setAdminToken } from '../../api/client.js'
 
 const route = useRoute()
 const router = useRouter()
@@ -34,8 +37,8 @@ async function login() {
   loading.value = true
   error.value = ''
   try {
-    const res = await api.login(username.value, password.value)
-    setToken(res.token)
+    const res = await api.adminLogin(username.value, password.value)
+    setAdminToken(res.token)
     router.push(route.query.redirect || '/admin/articles')
   } catch (e) {
     error.value = e.message

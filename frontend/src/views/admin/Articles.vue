@@ -1,5 +1,6 @@
 <template>
   <div>
+    <p v-if="error" class="form-msg error">{{ error }}</p>
     <table class="admin-table" v-if="articles.length">
       <thead>
         <tr>
@@ -23,7 +24,8 @@
         </tr>
       </tbody>
     </table>
-    <p v-else class="empty-hint">还没有文章，<router-link to="/admin/articles/new">写一篇</router-link></p>
+    <p v-else-if="!loading" class="empty-hint">还没有文章，<router-link to="/admin/articles/new">写一篇</router-link></p>
+    <p v-else>加载中...</p>
   </div>
 </template>
 
@@ -32,15 +34,29 @@ import { ref, onMounted } from 'vue'
 import { api } from '../../api/client.js'
 
 const articles = ref([])
+const loading = ref(true)
+const error = ref('')
 
 async function load() {
-  articles.value = await api.adminGetArticles()
+  loading.value = true
+  error.value = ''
+  try {
+    articles.value = await api.adminGetArticles()
+  } catch (e) {
+    error.value = e.message || '加载失败'
+  } finally {
+    loading.value = false
+  }
 }
 
 async function remove(id) {
   if (!confirm('确定删除这篇文章？')) return
-  await api.adminDeleteArticle(id)
-  await load()
+  try {
+    await api.adminDeleteArticle(id)
+    await load()
+  } catch (e) {
+    error.value = e.message || '删除失败'
+  }
 }
 
 function formatDate(iso) {
