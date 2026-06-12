@@ -53,6 +53,8 @@ async function remove(id) {
   if (!confirm('确定删除这篇文章？')) return
   try {
     await api.adminDeleteArticle(id)
+    // 成功后先清空数组再重新加载，避免临时空状态问题
+    articles.value = []
     await load()
   } catch (e) {
     error.value = e.message || '删除失败'

@@ -116,6 +116,9 @@ export default function adminRouter(db) {
 
   router.delete('/articles/:id', (req, res) => {
     const id = Number(req.params.id)
+    // 先删除该文章的评论
+    db.prepare('DELETE FROM comments WHERE article_id = ?').run(id)
+    // 再删除文章
     const result = db.prepare('DELETE FROM articles WHERE id = ?').run(id)
     if (!result.changes) return res.status(404).json({ error: '文章不存在' })
     res.json({ ok: true })
